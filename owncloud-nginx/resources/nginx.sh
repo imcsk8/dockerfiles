@@ -2,13 +2,12 @@
 #
 # nginx - this script starts and stops the nginx daemon
 #
-# chkconfig:   - 85 15 
 # description:  Nginx is an HTTP(S) server, HTTP(S) reverse \
 #               proxy and IMAP/POP3 proxy server
 # processname: nginx
 # config:      /etc/nginx/nginx.conf
-# config:      /etc/sysconfig/nginx
-# pidfile:     /var/run/nginx.pid
+# pidfile:     /run/nginx.pid
+ 
  
 nginx="/usr/sbin/nginx"
 prog=$(basename $nginx)
@@ -17,7 +16,7 @@ NGINX_CONF_FILE="/etc/nginx/nginx.conf"
  
 [ -f /etc/sysconfig/nginx ] && . /etc/sysconfig/nginx
  
-lockfile=/var/lock/subsys/nginx
+lockfile=/var/lib/nginx/nginx.lock
  
 make_dirs() {
    # make required directories
@@ -42,7 +41,7 @@ start() {
     [ -f $NGINX_CONF_FILE ] || exit 6
     make_dirs
     echo -n $"Starting $prog: "
-    daemon $nginx -c $NGINX_CONF_FILE
+    $nginx -c $NGINX_CONF_FILE
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
@@ -51,7 +50,7 @@ start() {
  
 stop() {
     echo -n $"Stopping $prog: "
-    killproc $prog -QUIT
+    $nginx -s stop
     retval=$?
     echo
     [ $retval -eq 0 ] && rm -f $lockfile
@@ -68,7 +67,7 @@ restart() {
 reload() {
     configtest || return $?
     echo -n $"Reloading $prog: "
-    killproc $nginx -HUP
+    $nginx -s reload
     RETVAL=$?
     echo
 }
@@ -82,27 +81,26 @@ configtest() {
 }
  
 rh_status() {
-    status $prog
-}
- 
-rh_status_q() {
-    rh_status >/dev/null 2>&1
+    STAT=$(pgrep $nginx)
+    if [[ -z $STAT ]]; then
+       echo "$nginx Active"
+       return 1
+    fi
+    echo "$nginx Inactive"
+    return 0
 }
  
 case "$1" in
     start)
-        rh_status_q && exit 0
         $1
         ;;
     stop)
-        rh_status_q || exit 0
         $1
         ;;
     restart|configtest)
         $1
         ;;
     reload)
-        rh_status_q || exit 7
         $1
         ;;
     force-reload)
@@ -111,10 +109,7 @@ case "$1" in
     status)
         rh_status
         ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-            ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}"
+        echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|configtest}"
         exit 2
 esac
