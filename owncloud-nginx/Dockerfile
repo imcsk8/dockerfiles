@@ -13,11 +13,13 @@ RUN tar jxf owncloud-latest.tar.bz2 -C /var/www
 RUN rm -f owncloud-latest.tar.bz2
 
 ADD resources/start.sh /
-ADD resources/php-fpm /
-ADD resources/nginx /
+ADD resources/php-fpm.sh /
+ADD resources/nginx.sh /
 ADD resources/nginx.conf /etc/nginx/
 
 RUN chown -R owncloud-user:owncloud-user /var/www/
+chmod +x /nginx.sh
+chmod +x /php-fpm.sh
 RUN chmod +x /start.sh
 
 # Define mountable directories.

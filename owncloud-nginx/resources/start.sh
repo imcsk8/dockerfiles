@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Run the application server
-/php-fpm start
-/nginx start
+/php-fpm.sh start
+/nginx.sh start
 
 
