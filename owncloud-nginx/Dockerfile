@@ -18,4 +18,4 @@ ADD resources/www.conf /etc/php-fpm.d/www.conf
 
 RUN chown -R owncloud-user:owncloud-user /var/www/
 
-CMD ["/usr/bin/supervisord -n"]
+CMD ["/usr/bin/supervisord"]
