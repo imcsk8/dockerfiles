@@ -17,9 +17,6 @@ ADD resources/supervisord.conf /etc/supervisor/supervisord.conf
 ADD resources/www.conf /etc/php-fpm.d/www.conf
 
 RUN chown -R owncloud-user:owncloud-user /var/www/
-chmod +x /nginx.sh
-chmod +x /php-fpm.sh
-RUN chmod +x /start.sh
 
 CMD ["/usr/bin/supervisord -n"]
 
