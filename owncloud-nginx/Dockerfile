@@ -15,7 +15,8 @@ RUN rm -f owncloud-latest.tar.bz2
 ADD resources/nginx.conf /etc/nginx/nginx.conf
 ADD resources/supervisord.conf /etc/supervisor/supervisord.conf
 ADD resources/www.conf /etc/php-fpm.d/www.conf
+ADD resources/start.sh /start.sh
 
 RUN chown -R owncloud-user:owncloud-user /var/www/
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/start.sh"]
