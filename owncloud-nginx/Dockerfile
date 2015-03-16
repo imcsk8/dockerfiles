@@ -4,7 +4,7 @@ MAINTAINER Ivan Chavero "imcsk8@sotoliolabs.com"
 # Change this for the ip address of the standalone
 # fastcgi server
 
-RUN yum install -y yum-fastestmirror yum-presto deltarpm nginx tar bzip2 php php-fpm openssl smbclient php-pdo
+RUN yum install -y yum-fastestmirror yum-presto deltarpm nginx tar bzip2 php php-fpm openssl smbclient php-pdo supervisor
 RUN groupadd owncloud-user
 RUN useradd -g owncloud-user -c 'OwnCloud User' -s /bin/false -d /var/www owncloud-user
 
@@ -12,17 +12,14 @@ RUN curl https://download.owncloud.org/community/owncloud-latest.tar.bz2 > owncl
 RUN tar jxf owncloud-latest.tar.bz2 -C /var/www 
 RUN rm -f owncloud-latest.tar.bz2
 
-ADD resources/start.sh /
-ADD resources/php-fpm.sh /
-ADD resources/nginx.sh /
-ADD resources/nginx.conf /etc/nginx/
+ADD resources/nginx.conf /etc/nginx/nginx.conf
+ADD resources/supervisord.conf /etc/supervisor/supervisord.conf
+ADD resources/www.conf /etc/php-fpm.d/www.conf
 
 RUN chown -R owncloud-user:owncloud-user /var/www/
 chmod +x /nginx.sh
 chmod +x /php-fpm.sh
 RUN chmod +x /start.sh
 
-# Define mountable directories.
-
-CMD ["/start.sh"]
+CMD ["/usr/bin/supervisord -n"]
 
