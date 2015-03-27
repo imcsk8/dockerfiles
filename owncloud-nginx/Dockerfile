@@ -12,6 +12,7 @@ RUN useradd -g owncloud-user -c 'OwnCloud User' -s /bin/false -d /var/www ownclo
 RUN curl https://download.owncloud.org/community/owncloud-latest.tar.bz2 > owncloud-latest.tar.bz2
 RUN tar jxf owncloud-latest.tar.bz2 -C /var/www 
 RUN rm -f owncloud-latest.tar.bz2
+RUN sed -i 's/daemonize = yes/daemonize = no/' /etc/php-fpm.conf 
 
 ADD resources/nginx.conf /etc/nginx/nginx.conf
 ADD resources/supervisord.conf /etc/supervisord.conf
